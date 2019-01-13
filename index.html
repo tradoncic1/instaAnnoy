@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 
 <html>
-
-<head>
-	<title>InstaCunt</title>
-	<meta http-equiv="refresh" content="5">
-	<meta http-equiv="cache-control" content="no-cache" />
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-</head>
+	<head>
+		<title>InstaCunt</title>
+		<!--refreshes every 5 seconds to check for followers-->
+		<meta http-equiv="refresh" content="5">
+		<meta http-equiv="cache-control" content="no-cache" />
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+	</head>
 
 <body>
 
@@ -21,8 +21,8 @@
 
 <script type="text/javascript">
 
-
-var token = '7034544513.1677ed0.872f08e7cec3484f88ef0de2617d3f47';
+//paste your instagram provided token
+var token = <instagram access token>;
 var audio = new Audio("DING DONG MY DONG.mp3");
 
 $.ajax({
@@ -37,19 +37,25 @@ $.ajax({
 
 	success: function(data){
 
+		//shows number of followers
 		var followers = data['data']['counts']['followed_by'];
+		//shows number of people youre following (can delete)
 		var follows = data['data']['counts']['follows'];
+		//shows old number of followers (needed to see if number has changed)
 		var old = loadFile("./followers.txt");
 
+		//puts values in the html doc
 		$(".followers").text(followers);
 		$(".follows").text(follows);
 		$(".old").text(old);
 
+		//if followers increased play sound
+		//only increased, put Number(followers) != Number(old) to check for any change
 		if (Number(followers) > Number(old)) audio.play();
 
+		//if changed put new value in followers.txt (prevents writing to file every refresh)
 		if (Number(followers) != Number(old))
 			WriteFile(Number(followers));
-		//WriteToFile(Number(followers));
 	},
 
 	error: function(data){
@@ -58,15 +64,16 @@ $.ajax({
 
 });
 
+//function to write to followers.txt (ajax post request to save.php)
 function WriteFile(str)
 {
 	var xmlhttp;
 	if (window.XMLHttpRequest)
-	{// code for IE7+, Firefox, Chrome, Opera, Safari
+	{
 		xmlhttp=new XMLHttpRequest();
 	}
 	else
-	{// code for IE6, IE5
+	{
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
 	xmlhttp.onreadystatechange=function()
@@ -77,12 +84,12 @@ function WriteFile(str)
 		}
 	}
 
-	//alert(Number(str));
 	xmlhttp.open("POST","save.php",true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	xmlhttp.send("name="+str);
 }
 
+//function to read file
 function loadFile(filePath) {
 	var result = null;
 	var xmlhttp = new XMLHttpRequest();
