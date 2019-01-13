@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>InstaCunt</title>
+	<meta http-equiv="refresh" content="5">
+	<meta http-equiv="cache-control" content="no-cache" />
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+</head>
+
+<body>
+
+
+<center><div class="container">
+	<h3>Total Followers : <strong class="followers"></strong></h3>
+	<h3>Total Following : <strong class="follows"></strong></h3>
+	<h3>Old Following : <strong class="old"></strong></h3>
+</div></center>
+
+
+<script type="text/javascript">
+
+
+var token = '7034544513.1677ed0.872f08e7cec3484f88ef0de2617d3f47';
+var audio = new Audio("DING DONG MY DONG.mp3");
+
+$.ajax({
+
+	url: 'https://api.instagram.com/v1/users/self',
+
+	dataType: 'jsonp',
+
+	type: 'GET',
+
+	data: {access_token: token},
+
+	success: function(data){
+
+		var followers = data['data']['counts']['followed_by'];
+		var follows = data['data']['counts']['follows'];
+		var old = loadFile("./followers.txt");
+
+		$(".followers").text(followers);
+		$(".follows").text(follows);
+		$(".old").text(old);
+
+		if (Number(followers) > Number(old)) audio.play();
+
+		if (Number(followers) != Number(old))
+			WriteFile(Number(followers));
+		//WriteToFile(Number(followers));
+	},
+
+	error: function(data){
+		console.log(data);
+	}
+
+});
+
+function WriteFile(str)
+{
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	{// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+	else
+	{// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			console.log('done');
+		}
+	}
+
+	//alert(Number(str));
+	xmlhttp.open("POST","save.php",true);
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.send("name="+str);
+}
+
+function loadFile(filePath) {
+	var result = null;
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", filePath, false);
+	xmlhttp.send();
+	if (xmlhttp.status==200) {
+		result = xmlhttp.responseText;
+	}
+	return result;
+}
+</script>
+
+</body>
+</html>
